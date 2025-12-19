@@ -39,11 +39,7 @@ namespace API_de_Ventas.Controllers.Cliente
                 });
             }
 
-            return Ok(new
-            {
-                success = true,
-                value = result.Value
-            });
+            return CreatedAtAction(nameof(ObtenerPorId), new { id = result.Value.Id }, result.Value);
         }
 
         [HttpGet("{id}")]

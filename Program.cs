@@ -1,7 +1,11 @@
 using API_de_Ventas.DALs.ClienteRepositoryCarpeta;
+using API_de_Ventas.DALs.PedidoRepositoryCarpeta;
+using API_de_Ventas.DALs.ProductoRepositoryCarpeta;
 using API_de_Ventas.Middlewares;
 using API_de_Ventas.Models;
 using API_de_Ventas.Service.ClienteServiceCarpeta;
+using API_de_Ventas.Service.PedidoServiceCarpeta;
+using API_de_Ventas.Service.ProductoServiceCarpeta;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -57,6 +61,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
+
+builder.Services.AddScoped<IProductoRepository, ProductoRepository>();
+builder.Services.AddScoped<IProductoService, ProductoService>();
+
+builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
+builder.Services.AddScoped<IPedidoService, PedidoService>();
 
 // =======================
 // APP
