@@ -1,4 +1,5 @@
 ﻿using API_de_Ventas.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace API_de_Ventas.DALs.PedidoRepositoryCarpeta
 {
@@ -16,6 +17,23 @@ namespace API_de_Ventas.DALs.PedidoRepositoryCarpeta
             _context.Pedidos.Add(pedido);
             await _context.SaveChangesAsync();
             return pedido;
+        }
+
+        public async Task<Pedido?> ObtenerPedidoDetallesPorId(int pedidoId)
+        {
+            var pedidoEcontrado = await _context.Pedidos
+                .Include(p => p.Detalles)
+                .FirstOrDefaultAsync(p => p.Id == pedidoId);
+
+            return pedidoEcontrado;
+        }
+        public async Task<List<Pedido>> ObtenerPedidosDetallesPorClienteId(int clienteId)
+        {
+            var pedidosDetalles = await _context.Pedidos
+                .Include(p => p.Detalles)
+                .Where(p => p.ClienteId == clienteId).ToListAsync();
+
+            return pedidosDetalles;
         }
     }
 }

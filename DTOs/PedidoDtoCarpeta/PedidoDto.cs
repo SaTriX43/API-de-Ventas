@@ -12,5 +12,6 @@ namespace API_de_Ventas.DTOs.PedidoDtoCarpeta
 
         public decimal Total { get; set; }
 
+        public ICollection<PedidoDetallesDto>? DetallesDtos { get; set; }
     }
 }

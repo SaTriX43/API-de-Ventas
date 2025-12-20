@@ -109,5 +109,62 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
 
             return Result<PedidoDto>.Success(pedidoCreadoDto);
         }
+        public async Task<Result<PedidoDto>> ObtenerPedidoDetallesPorId(int pedidoId)
+        {
+            var pedidoExiste = await _pedidoRepository.ObtenerPedidoDetallesPorId(pedidoId);
+
+            if(pedidoExiste == null)
+            {
+                return Result<PedidoDto>.Failure($"Su pedido con id = {pedidoId} no existe");
+            }
+
+            var pedidoDto = new PedidoDto
+            {
+                Id = pedidoExiste.Id,
+                ClienteId = pedidoExiste.ClienteId,
+                FechaPedido = pedidoExiste.FechaPedido,
+                Total = pedidoExiste.Total,
+                DetallesDtos = pedidoExiste.Detalles.Select(d => new PedidoDetallesDto
+                {
+                    PedidoId = d.Id,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario,
+                    ProductoId = d.ProductoId,
+                    Subtotal = d.Subtotal
+                }).ToList()
+            };
+
+            return Result<PedidoDto>.Success(pedidoDto);
+        }
+        public async Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteId(int clienteId)
+        {
+            var clienteExiste = await _clienteRepository.ObtenerPorIdAsync(clienteId);
+
+            if(clienteExiste == null)
+            {
+                return Result<List<PedidoDto>>.Failure($"Su cliente con id = {clienteId} no existe");
+            }
+
+            var pedidos = await _pedidoRepository.ObtenerPedidosDetallesPorClienteId(clienteId);
+
+
+            var pedidosDto = pedidos.Select(p => new PedidoDto
+            {
+                Id = p.Id,
+                ClienteId = p.ClienteId,
+                FechaPedido = p.FechaPedido,
+                Total = p.Total,
+                DetallesDtos = p.Detalles.Select(d => new PedidoDetallesDto
+                {
+                    PedidoId = d.Id,
+                    Cantidad = d.Cantidad,
+                    PrecioUnitario = d.PrecioUnitario,
+                    ProductoId = d.ProductoId,
+                    Subtotal = d.Subtotal
+                }).ToList()
+            }).ToList(); 
+
+            return Result<List<PedidoDto>>.Success(pedidosDto);
+        }
     }
 }
