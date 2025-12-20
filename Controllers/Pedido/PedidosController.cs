@@ -40,7 +40,7 @@ namespace API_de_Ventas.Controllers.Pedido
 
             return Ok(new
             {
-                success = false,
+                success = true,
                 valor = pedidoDetalle.Value
             });
         }
@@ -76,7 +76,7 @@ namespace API_de_Ventas.Controllers.Pedido
 
             return Ok(new
             {
-                success = false,
+                success = true,
                 valor = pedidoDetalle.Value
             });
         }
@@ -104,7 +104,11 @@ namespace API_de_Ventas.Controllers.Pedido
                 });
             }
 
-            return Ok(pedidoCreado.Value);
+            return Ok(new
+            {
+                success = true,
+                valor = pedidoCreado.Value
+            });
         }
     }
 }
