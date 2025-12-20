@@ -46,7 +46,13 @@ namespace API_de_Ventas.Controllers.Pedido
         }
 
         [HttpGet("obtener-pedido-detalles-cliente/{clienteId}")]
-        public async Task<IActionResult> ObtenerPedidoDetallesPorClienteId(int clienteId)
+        public async Task<IActionResult> ObtenerPedidoDetallesPorClienteId(
+            int clienteId,
+            [FromQuery] DateTime? fechaInicio,
+            [FromQuery] DateTime? fechaFinal,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10
+            )
         {
             if (clienteId <= 0)
             {
@@ -57,7 +63,7 @@ namespace API_de_Ventas.Controllers.Pedido
                 });
             }
 
-            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorClienteId(clienteId);
+            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorClienteId(clienteId, fechaInicio, fechaFinal, page, pageSize);
 
             if (pedidoDetalle.IsFailure)
             {

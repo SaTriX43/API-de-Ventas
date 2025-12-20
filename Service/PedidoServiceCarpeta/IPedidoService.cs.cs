@@ -7,6 +7,6 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
     {
         public Task<Result<PedidoDto>> CrearPedido(PedidoCrearDto pedidoCrear);
         public Task<Result<PedidoDto>> ObtenerPedidoDetallesPorId(int pedidoId);
-        public Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteId(int clienteId);
+        public Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteId(int clienteId, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize);
     }
 }

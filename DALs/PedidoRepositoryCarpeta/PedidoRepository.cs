@@ -27,13 +27,25 @@ namespace API_de_Ventas.DALs.PedidoRepositoryCarpeta
 
             return pedidoEcontrado;
         }
-        public async Task<List<Pedido>> ObtenerPedidosDetallesPorClienteId(int clienteId)
+        public async Task<List<Pedido>> ObtenerPedidosDetallesPorClienteId(int clienteId, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
         {
-            var pedidosDetalles = await _context.Pedidos
-                .Include(p => p.Detalles)
-                .Where(p => p.ClienteId == clienteId).ToListAsync();
+            var query = _context.Pedidos.Include(p => p.Detalles).Where(p => p.ClienteId == clienteId).AsQueryable();
 
-            return pedidosDetalles;
+            if(fechaInicio.HasValue)
+            {
+                query = query.Where(p => p.FechaPedido >=  fechaInicio.Value);
+            }
+
+            if (fechaFinal.HasValue)
+            {
+                query = query.Where(p => p.FechaPedido <= fechaFinal.Value);
+            }
+
+            query = query.OrderByDescending(p => p.FechaPedido);
+
+            query = query.Skip((page - 1) * pageSize).Take(pageSize);
+
+            return await query.ToListAsync();
         }
     }
 }

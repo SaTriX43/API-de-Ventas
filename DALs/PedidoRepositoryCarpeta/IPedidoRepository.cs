@@ -6,7 +6,7 @@ namespace API_de_Ventas.DALs.PedidoRepositoryCarpeta
     {
         public Task<Pedido> CrearPedido(Pedido pedido);
         public Task<Pedido?> ObtenerPedidoDetallesPorId(int pedidoId);
-        public Task<List<Pedido>> ObtenerPedidosDetallesPorClienteId(int clienteId);
+        public Task<List<Pedido>> ObtenerPedidosDetallesPorClienteId(int clienteId, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize);
 
     }
 }

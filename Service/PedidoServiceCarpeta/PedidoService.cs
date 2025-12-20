@@ -136,7 +136,7 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
 
             return Result<PedidoDto>.Success(pedidoDto);
         }
-        public async Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteId(int clienteId)
+        public async Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteId(int clienteId, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
         {
             var clienteExiste = await _clienteRepository.ObtenerPorIdAsync(clienteId);
 
@@ -145,7 +145,7 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
                 return Result<List<PedidoDto>>.Failure($"Su cliente con id = {clienteId} no existe");
             }
 
-            var pedidos = await _pedidoRepository.ObtenerPedidosDetallesPorClienteId(clienteId);
+            var pedidos = await _pedidoRepository.ObtenerPedidosDetallesPorClienteId(clienteId, fechaInicio, fechaFinal, page, pageSize);
 
 
             var pedidosDto = pedidos.Select(p => new PedidoDto
