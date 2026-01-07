@@ -12,32 +12,24 @@ namespace API_de_Ventas.DALs.ProductoRepositoryCarpeta
             _context = context;
         }
 
-        public async Task<Producto?> ObtenerPorIdAsync(int id)
+        public async Task<Producto?> ObtenerProductoPorIdAsync(int id)
         {
             return await _context.Productos.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task<Producto?> ObtenerPorNombreAsync(string nombre)
+        public async Task<Producto?> ObtenerProductoPorNombreAsync(string nombre)
         {
             return await _context.Productos.FirstOrDefaultAsync(p => p.Nombre == nombre);
         }
 
-        public async Task<List<Producto>> ObtenerTodosAsync()
+        public async Task<List<Producto>> ObtenerTodosProductosAsync()
         {
             return await _context.Productos.ToListAsync();
         }
 
-        public async Task<Producto> CrearAsync(Producto producto)
+        public Producto CrearProducto(Producto producto)
         {
             _context.Productos.Add(producto);
-            await _context.SaveChangesAsync();
-            return producto;
-        }
-
-        public async Task<Producto> ActualizarAsync(Producto producto)
-        {
-            _context.Productos.Update(producto);
-            await _context.SaveChangesAsync();
             return producto;
         }
     }

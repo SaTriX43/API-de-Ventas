@@ -5,9 +5,9 @@ namespace API_de_Ventas.Service.ProductoServiceCarpeta
 {
     public interface IProductoService
     {
-        Task<Result<ProductoDto>> CrearAsync(ProductoCrearDto dto);
-        Task<Result<ProductoDto>> ObtenerPorIdAsync(int id);
-        Task<Result<List<ProductoDto>>> ObtenerTodosAsync();
-        Task<Result<ProductoDto>> ActualizarAsync(int id, ProductoActualizarDto dto);
+        Task<Result<ProductoDto>> CrearProductoAsync(ProductoCrearDto dto);
+        Task<Result<ProductoDto>> ObtenerProductoPorIdAsync(int productoId);
+        Task<Result<List<ProductoDto>>> ObtenerTodosProductosAsync();
+        Task<Result> ActualizarProductoAsync(int productoId, ProductoActualizarDto dto);
     }
 }

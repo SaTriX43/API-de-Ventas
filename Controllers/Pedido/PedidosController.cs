@@ -15,19 +15,11 @@ namespace API_de_Ventas.Controllers.Pedido
             _pedidoService = pedidoService;
         }
 
-        [HttpGet("obtener-pedido-detalles/{pedidoId}")]
+        [HttpGet("{pedidoId}")]
         public async Task<IActionResult> ObtenerPedidoDetallesPorId(int pedidoId)
         {
-            if(pedidoId <= 0)
-            {
-                return BadRequest( new
-                {
-                    success = false,
-                    error = "Su pedidoId no puede ser menor o igual a 0"
-                });
-            }
-
-            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorId(pedidoId);
+           
+            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorIdAsync(pedidoId);
 
             if(pedidoDetalle.IsFailure)
             {
@@ -45,7 +37,7 @@ namespace API_de_Ventas.Controllers.Pedido
             });
         }
 
-        [HttpGet("obtener-pedido-detalles-cliente/{clienteId}")]
+        [HttpGet("cliente/{clienteId}")]
         public async Task<IActionResult> ObtenerPedidoDetallesPorClienteId(
             int clienteId,
             [FromQuery] DateTime? fechaInicio,
@@ -54,16 +46,7 @@ namespace API_de_Ventas.Controllers.Pedido
             [FromQuery] int pageSize = 10
             )
         {
-            if (clienteId <= 0)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    error = "Su clienteId no puede ser menor o igual a 0"
-                });
-            }
-
-            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorClienteId(clienteId, fechaInicio, fechaFinal, page, pageSize);
+            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorClienteIdAsync(clienteId, fechaInicio, fechaFinal, page, pageSize);
 
             if (pedidoDetalle.IsFailure)
             {
@@ -81,7 +64,7 @@ namespace API_de_Ventas.Controllers.Pedido
             });
         }
 
-        [HttpPost("crear-pedido")]
+        [HttpPost]
         public async Task<IActionResult> CrearPedido([FromBody] PedidoCrearDto pedidoCrear)
         {
             if(!ModelState.IsValid)
@@ -93,7 +76,7 @@ namespace API_de_Ventas.Controllers.Pedido
                 });
             }
 
-            var pedidoCreado = await _pedidoService.CrearPedido(pedidoCrear);
+            var pedidoCreado = await _pedidoService.CrearPedidoAsync(pedidoCrear);
 
             if(pedidoCreado.IsFailure)
             {

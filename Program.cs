@@ -1,3 +1,4 @@
+using API_de_Ventas.DALs;
 using API_de_Ventas.DALs.ClienteRepositoryCarpeta;
 using API_de_Ventas.DALs.PedidoRepositoryCarpeta;
 using API_de_Ventas.DALs.ProductoRepositoryCarpeta;
@@ -67,6 +68,8 @@ builder.Services.AddScoped<IProductoService, ProductoService>();
 
 builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
+
+builder.Services.AddScoped<IUnidadDeTrabajo,UnidadDeTrabajo>();
 
 // =======================
 // APP

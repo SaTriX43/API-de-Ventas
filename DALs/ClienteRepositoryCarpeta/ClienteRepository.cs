@@ -12,22 +12,21 @@ namespace API_de_Ventas.DALs.ClienteRepositoryCarpeta
             _context = context;
         }
 
-        public async Task<Cliente?> ObtenerPorEmailAsync(string email)
+        public async Task<Cliente?> ObtenerClientePorEmailAsync(string email)
         {
             return await _context.Clientes
                 .FirstOrDefaultAsync(c => c.Email == email);
         }
 
-        public async Task<Cliente?> ObtenerPorIdAsync(int id)
+        public async Task<Cliente?> ObtenerClientePorIdAsync(int id)
         {
             return await _context.Clientes
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<Cliente> CrearAsync(Cliente cliente)
+        public Cliente CrearCliente(Cliente cliente)
         {
             _context.Clientes.Add(cliente);
-            await _context.SaveChangesAsync();
             return cliente;
         }
     }

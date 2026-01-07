@@ -9,15 +9,15 @@ namespace API_de_Ventas.Controllers.Producto
     [Route("api/[controller]")]
     public class ProductosController : ControllerBase
     {
-        private readonly IProductoService _service;
+        private readonly IProductoService _productoService;
 
-        public ProductosController(IProductoService service)
+        public ProductosController(IProductoService productoService)
         {
-            _service = service;
+            _productoService = productoService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear([FromBody] ProductoCrearDto dto)
+        public async Task<IActionResult> CrearProducto([FromBody] ProductoCrearDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -28,7 +28,7 @@ namespace API_de_Ventas.Controllers.Producto
                 });
             }
 
-            var result = await _service.CrearAsync(dto);
+            var result = await _productoService.CrearProductoAsync(dto);
 
             if (result.IsFailure)
             {
@@ -40,29 +40,21 @@ namespace API_de_Ventas.Controllers.Producto
             }
 
             return CreatedAtAction(
-                nameof(ObtenerPorId),
-                new { id = result.Value.Id },
+                nameof(ObtenerProductoPorId),
+                new { productoId = result.Value.Id },
                 result.Value
                 );
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ObtenerPorId(int id)
+        [HttpGet("{productoId}")]
+        public async Task<IActionResult> ObtenerProductoPorId(int productoId)
         {
-            if (id <= 0)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    error = "Id inválido"
-                });
-            }
-
-            var result = await _service.ObtenerPorIdAsync(id);
+           
+            var result = await _productoService.ObtenerProductoPorIdAsync(productoId);
 
             if (result.IsFailure)
             {
-                return NotFound(new
+                return BadRequest(new
                 {
                     success = false,
                     error = result.Error
@@ -77,9 +69,9 @@ namespace API_de_Ventas.Controllers.Producto
         }
 
         [HttpGet]
-        public async Task<IActionResult> ObtenerTodos()
+        public async Task<IActionResult> ObtenerTodosProductos()
         {
-            var result = await _service.ObtenerTodosAsync();
+            var result = await _productoService.ObtenerTodosProductosAsync();
 
             return Ok(new
             {
@@ -88,8 +80,8 @@ namespace API_de_Ventas.Controllers.Producto
             });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> Actualizar(int id, [FromBody] ProductoActualizarDto dto)
+        [HttpPut("{productoId}")]
+        public async Task<IActionResult> ActualizarProducto(int productoId, [FromBody] ProductoActualizarDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -100,7 +92,7 @@ namespace API_de_Ventas.Controllers.Producto
                 });
             }
 
-            var result = await _service.ActualizarAsync(id, dto);
+            var result = await _productoService.ActualizarProductoAsync(productoId, dto);
 
             if (result.IsFailure)
             {
@@ -111,11 +103,7 @@ namespace API_de_Ventas.Controllers.Producto
                 });
             }
 
-            return Ok(new
-            {
-                success = true,
-                value = result.Value
-            });
+            return NoContent();
         }
     }
 

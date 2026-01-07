@@ -4,9 +4,9 @@ namespace API_de_Ventas.DALs.ClienteRepositoryCarpeta
 {
     public interface IClienteRepository
     {
-        Task<Cliente?> ObtenerPorEmailAsync(string email);
-        Task<Cliente?> ObtenerPorIdAsync(int id);
-        Task<Cliente> CrearAsync(Cliente cliente);
+        public Task<Cliente?> ObtenerClientePorEmailAsync(string email);
+        public Task<Cliente?> ObtenerClientePorIdAsync(int id);
+        public Cliente CrearCliente(Cliente cliente);
     }
 }
 

@@ -12,14 +12,13 @@ namespace API_de_Ventas.DALs.PedidoRepositoryCarpeta
             _context = context;
         }
 
-        public async Task<Pedido> CrearPedido(Pedido pedido)
+        public Pedido CrearPedido(Pedido pedido)
         {
             _context.Pedidos.Add(pedido);
-            await _context.SaveChangesAsync();
             return pedido;
         }
 
-        public async Task<Pedido?> ObtenerPedidoDetallesPorId(int pedidoId)
+        public async Task<Pedido?> ObtenerPedidoDetallesPorIdAsync(int pedidoId)
         {
             var pedidoEcontrado = await _context.Pedidos
                 .Include(p => p.Detalles)
@@ -27,7 +26,7 @@ namespace API_de_Ventas.DALs.PedidoRepositoryCarpeta
 
             return pedidoEcontrado;
         }
-        public async Task<List<Pedido>> ObtenerPedidosDetallesPorClienteId(int clienteId, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
+        public async Task<List<Pedido>> ObtenerPedidosDetallesPorClienteIdAsync(int clienteId, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
         {
             var query = _context.Pedidos.Include(p => p.Detalles).Where(p => p.ClienteId == clienteId).AsQueryable();
 

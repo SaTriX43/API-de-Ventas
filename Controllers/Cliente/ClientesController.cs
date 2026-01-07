@@ -9,15 +9,15 @@ namespace API_de_Ventas.Controllers.Cliente
     [Route("api/[controller]")]
     public class ClientesController : ControllerBase
     {
-        private readonly IClienteService _service;
+        private readonly IClienteService _clienteService;
 
-        public ClientesController(IClienteService service)
+        public ClientesController(IClienteService clienteService)
         {
-            _service = service;
+            _clienteService = clienteService;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Crear([FromBody] ClienteCrearDto dto)
+        public async Task<IActionResult> CrearCliente([FromBody] ClienteCrearDto dto)
         {
             if (!ModelState.IsValid)
             {
@@ -28,7 +28,7 @@ namespace API_de_Ventas.Controllers.Cliente
                 });
             }
 
-            var result = await _service.CrearAsync(dto);
+            var result = await _clienteService.CrearClienteAsync(dto);
 
             if (result.IsFailure)
             {
@@ -39,22 +39,14 @@ namespace API_de_Ventas.Controllers.Cliente
                 });
             }
 
-            return CreatedAtAction(nameof(ObtenerPorId), new { id = result.Value.Id }, result.Value);
+            return CreatedAtAction(nameof(ObtenerClientePorId), new { id = result.Value.Id }, result.Value);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ObtenerPorId(int id)
+        [HttpGet("{clienteId}")]
+        public async Task<IActionResult> ObtenerClientePorId(int clienteId)
         {
-            if (id <= 0)
-            {
-                return BadRequest(new
-                {
-                    success = false,
-                    error = "Id inválido"
-                });
-            }
 
-            var result = await _service.ObtenerPorIdAsync(id);
+            var result = await _clienteService.ObtenerClientePorIdAsync(clienteId);
 
             if (result.IsFailure)
             {

@@ -1,4 +1,5 @@
-﻿using API_de_Ventas.DALs.ClienteRepositoryCarpeta;
+﻿using API_de_Ventas.DALs;
+using API_de_Ventas.DALs.ClienteRepositoryCarpeta;
 using API_de_Ventas.DTOs.ClienteDtoCarpeta;
 using API_de_Ventas.Models;
 
@@ -6,18 +7,20 @@ namespace API_de_Ventas.Service.ClienteServiceCarpeta
 {
     public class ClienteService : IClienteService
     {
-        private readonly IClienteRepository _repository;
+        private readonly IUnidadDeTrabajo _unidadDeTrabajo;
+        private readonly IClienteRepository _clienteRepository;
 
-        public ClienteService(IClienteRepository repository)
+        public ClienteService(IClienteRepository clienteRepository,IUnidadDeTrabajo unidadDeTrabajo)
         {
-            _repository = repository;
+            _unidadDeTrabajo = unidadDeTrabajo;
+            _clienteRepository = clienteRepository;
         }
 
-        public async Task<Result<ClienteDto>> CrearAsync(ClienteCrearDto dto)
+        public async Task<Result<ClienteDto>> CrearClienteAsync(ClienteCrearDto dto)
         {
             var emailNormalizado = dto.Email.Trim().ToLower();
 
-            var existe = await _repository.ObtenerPorEmailAsync(emailNormalizado);
+            var existe = await _clienteRepository.ObtenerClientePorEmailAsync(emailNormalizado);
             if (existe != null)
             {
                 return Result<ClienteDto>.Failure("Ya existe un cliente con ese email");
@@ -30,7 +33,9 @@ namespace API_de_Ventas.Service.ClienteServiceCarpeta
                 Telefono = dto.Telefono
             };
 
-            var creado = await _repository.CrearAsync(cliente);
+            var creado = _clienteRepository.CrearCliente(cliente);
+            await _unidadDeTrabajo.GuardarCambiosAsync();
+
 
             return Result<ClienteDto>.Success(new ClienteDto
             {
@@ -42,9 +47,14 @@ namespace API_de_Ventas.Service.ClienteServiceCarpeta
             });
         }
 
-        public async Task<Result<ClienteDto>> ObtenerPorIdAsync(int id)
+        public async Task<Result<ClienteDto>> ObtenerClientePorIdAsync(int clienteId)
         {
-            var cliente = await _repository.ObtenerPorIdAsync(id);
+            if(clienteId <= 0)
+            {
+                return Result<ClienteDto>.Failure("Su clienteId no puede ser menor o igual a 0");
+            }
+
+            var cliente = await _clienteRepository.ObtenerClientePorIdAsync(clienteId);
             if (cliente == null)
             {
                 return Result<ClienteDto>.Failure("Cliente no encontrado");

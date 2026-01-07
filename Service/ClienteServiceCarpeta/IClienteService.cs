@@ -5,8 +5,8 @@ namespace API_de_Ventas.Service.ClienteServiceCarpeta
 {
     public interface IClienteService
     {
-        Task<Result<ClienteDto>> CrearAsync(ClienteCrearDto dto);
-        Task<Result<ClienteDto>> ObtenerPorIdAsync(int id);
+        Task<Result<ClienteDto>> CrearClienteAsync(ClienteCrearDto dto);
+        Task<Result<ClienteDto>> ObtenerClientePorIdAsync(int clienteId);
     }
 
 }
