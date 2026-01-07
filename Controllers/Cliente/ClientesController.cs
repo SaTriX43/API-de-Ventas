@@ -1,5 +1,6 @@
 ﻿using API_de_Ventas.DTOs.ClienteDtoCarpeta;
 using API_de_Ventas.Service.ClienteServiceCarpeta;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace API_de_Ventas.Controllers.Cliente
             _clienteService = clienteService;
         }
 
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         public async Task<IActionResult> CrearCliente([FromBody] ClienteCrearDto dto)
         {
@@ -42,6 +44,7 @@ namespace API_de_Ventas.Controllers.Cliente
             return CreatedAtAction(nameof(ObtenerClientePorId), new { id = result.Value.Id }, result.Value);
         }
 
+        [Authorize]
         [HttpGet("{clienteId}")]
         public async Task<IActionResult> ObtenerClientePorId(int clienteId)
         {
@@ -61,6 +64,17 @@ namespace API_de_Ventas.Controllers.Cliente
             {
                 success = true,
                 value = result.Value
+            });
+        }
+
+        [Authorize]
+        [HttpGet("test-auth")]
+        public IActionResult TestAuth()
+        {
+            return Ok(new
+            {
+                User = User.Identity?.Name,
+                Claims = User.Claims.Select(c => new { c.Type, c.Value })
             });
         }
     }

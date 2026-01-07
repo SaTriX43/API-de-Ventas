@@ -8,7 +8,7 @@ namespace API_de_Ventas.Models
             : base(options)
         {
         }
-
+        public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Producto> Productos { get; set; }
         public DbSet<Pedido> Pedidos { get; set; }
@@ -17,6 +17,13 @@ namespace API_de_Ventas.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Usuario>()
+              .HasMany(u => u.Pedidos)
+              .WithOne(p => p.Usuario)
+              .HasForeignKey(p => p.UsuarioId)
+              .OnDelete(DeleteBehavior.Restrict);
+
 
             // Cliente -> Pedidos (1:N)
             modelBuilder.Entity<Cliente>()

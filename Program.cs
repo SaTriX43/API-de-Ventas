@@ -1,15 +1,18 @@
 using API_de_Ventas.DALs;
 using API_de_Ventas.DALs.ClienteRepositoryCarpeta;
+using API_de_Ventas.DALs.IUsuarioRepositoryCarpeta;
 using API_de_Ventas.DALs.PedidoRepositoryCarpeta;
 using API_de_Ventas.DALs.ProductoRepositoryCarpeta;
 using API_de_Ventas.Middlewares;
 using API_de_Ventas.Models;
+using API_de_Ventas.Service.AutenticacionServiceCarpeta;
 using API_de_Ventas.Service.ClienteServiceCarpeta;
 using API_de_Ventas.Service.PedidoServiceCarpeta;
 using API_de_Ventas.Service.ProductoServiceCarpeta;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
 
@@ -58,7 +61,39 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // =======================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "API de Ventas",
+        Version = "v1"
+    });
+
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Ingresa el token JWT así: Bearer {tu_token}"
+    });
+
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
@@ -70,6 +105,10 @@ builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 builder.Services.AddScoped<IPedidoService, PedidoService>();
 
 builder.Services.AddScoped<IUnidadDeTrabajo,UnidadDeTrabajo>();
+
+builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
+
+builder.Services.AddScoped<IAutenticacionService, AutenticacionService>();
 
 // =======================
 // APP
