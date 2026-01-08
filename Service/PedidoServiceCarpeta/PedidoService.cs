@@ -15,14 +15,16 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
         private readonly IPedidoRepository _pedidoRepository;
         private readonly IClienteRepository _clienteRepository;
         private readonly IProductoRepository _productoRepository;
+        private readonly IPedidoPdfService _pedidoPdfService;
 
 
-        public PedidoService(IPedidoRepository pedidoRepository, IClienteRepository clienteRepository, IProductoRepository productoRepository,IUnidadDeTrabajo unidadDeTrabajo)
+        public PedidoService(IPedidoRepository pedidoRepository, IClienteRepository clienteRepository, IProductoRepository productoRepository,IUnidadDeTrabajo unidadDeTrabajo, IPedidoPdfService pedidoPdfService)
         {
             _pedidoRepository = pedidoRepository;
             _clienteRepository = clienteRepository;
             _productoRepository = productoRepository;
             _unidadDeTrabajo = unidadDeTrabajo;
+            _pedidoPdfService = pedidoPdfService;
         }
 
         public async Task<Result<PedidoDto>> CrearPedidoAsync(PedidoCrearDto pedidoCrearDto, int usuarioId)
@@ -132,13 +134,12 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
                 return Result<PedidoDto>.Failure($"Su pedido con id = {pedidoId} no existe");
             }
 
-            if (!esAdmin)
+           
+            if (!esAdmin && pedido.UsuarioId != usuarioId)
             {
-                if (pedido != null && pedido.UsuarioId != usuarioId)
-                {
-                    return Result<PedidoDto>.Failure("No puede ver un pedido que usted no creo");
-                }
+                return Result<PedidoDto>.Failure("No puede ver un pedido que usted no creo");
             }
+            
 
             var pedidoDto = new PedidoDto
             {
@@ -200,7 +201,6 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
 
             return Result<List<PedidoDto>>.Success(pedidosDto);
         }
-
         public async Task<Result<List<PedidoDto>>> ObtenerPedidosAsync(int usuarioId, bool esAdmin, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
         {
             var pedidos = new List<Pedido>();
@@ -230,6 +230,25 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
             }).ToList();
 
             return Result<List<PedidoDto>>.Success(pedidosDto);
+        }
+        public async Task<Result<byte[]>> ExportarPedidoIdPdfAsync(int pedidoId,int usuarioId, bool esAdmin)
+        {
+            var pedido = await _pedidoRepository.ObtenerPedidoDetallesPorIdAsync(pedidoId);
+
+            if(pedido == null)
+            {
+                return Result<byte[]>.Failure($"Su pedido con id = {pedidoId} no existe");
+            }
+
+            
+            if(!esAdmin && pedido.UsuarioId != usuarioId)
+            {
+                return Result<byte[]>.Failure("No puede exportar un pedido que usted no vendio");
+            }
+
+            var pedidoPdf = _pedidoPdfService.GenerarPedidoPdf(pedido);
+
+            return Result<byte[]>.Success(pedidoPdf);
         }
     }
 }

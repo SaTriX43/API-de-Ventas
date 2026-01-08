@@ -3,6 +3,7 @@ using API_de_Ventas.Models;
 using API_de_Ventas.Service.PedidoServiceCarpeta;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -168,39 +169,38 @@ namespace API_de_Ventas.Controllers.Pedido
             });
         }
 
-        //[Authorize]
-        //[HttpGet("{pedidoId}/pdf")]
-        //public async Task<IActionResult> ExportarFactura(int pedidoId)
-        //{
-        //    var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        [Authorize]
+        [HttpGet("{pedidoId}/pdf")]
+        public async Task<IActionResult> ExportarPedidoIdPdf(int pedidoId)
+        {
+            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        //    if (!int.TryParse(usuarioIdClaim, out int usuarioId))
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            success = false,
-        //            error = "usuarioId invalido"
-        //        });
-        //    }
+            if (!int.TryParse(usuarioIdClaim, out int usuarioId))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    error = "usuarioId invalido"
+                });
+            }
 
-        //    var esAdmin = User.IsInRole("Admin");
+            var esAdmin = User.IsInRole("Admin");
 
-        //    var pedidoPdf = await _pedidoService.ExportarPdfAsync(usuarioId, esAdmin);
+            var pedidoPdf = await _pedidoService.ExportarPedidoIdPdfAsync(pedidoId ,usuarioId, esAdmin);
 
-        //    if (pedidoPdf.IsFailure)
-        //    {
-        //        return BadRequest(new
-        //        {
-        //            success = false,
-        //            error = pedidoPdf.Error
-        //        });
-        //    }
+            if (pedidoPdf.IsFailure)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    error = pedidoPdf.Error
+                });
+            }
 
-        //    return Ok(new
-        //    {
-        //        success = true,
-        //        valor = pedidoPdf.Value
-        //    });
-        //}
+            return File(
+                pedidoPdf.Value,
+                "application/pdf",
+                $"pedido_{pedidoId}.pdf");
+            }
     }
 }

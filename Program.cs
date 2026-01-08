@@ -16,9 +16,11 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Security.Claims;
 using System.Text;
-
+using QuestPDF.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+QuestPDF.Settings.License = LicenseType.Community;
 
 // =======================
 // SERILOG
@@ -115,6 +117,8 @@ builder.Services.AddScoped<IUnidadDeTrabajo,UnidadDeTrabajo>();
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 
 builder.Services.AddScoped<IAutenticacionService, AutenticacionService>();
+
+builder.Services.AddScoped<IPedidoPdfService, PedidoPdfService>();
 
 // =======================
 // APP

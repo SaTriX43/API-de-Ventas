@@ -9,6 +9,6 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
         public Task<Result<PedidoDto>> ObtenerPedidoDetallesPorIdAsync(int pedidoId,bool esAdmin, int usuarioId);
         public Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteIdAsync(int clienteId,int usuarioId,bool esAdmin ,DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize);
         public Task<Result<List<PedidoDto>>> ObtenerPedidosAsync(int usuarioId, bool esAdmin,DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize);
-        //public Task<Result<>> ExportarPdfAsync(int usuarioId,bool esAdmin);
+        public Task<Result<byte[]>> ExportarPedidoIdPdfAsync(int pedidoId,int usuarioId,bool esAdmin);
     }
 }
