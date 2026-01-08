@@ -1,94 +1,99 @@
-﻿# 🧾 API de Ventas — ASP.NET Core (.NET 8)
+﻿# API de Ventas y Facturación
 
-using API_de_Ventas.Models;
-using Microsoft.AspNetCore.Mvc;
+API REST desarrollada en **ASP.NET Core (.NET 8)** para la gestión de ventas y facturación básica, con autenticación JWT, control de roles y reglas de negocio.
 
-API REST desarrollada en **ASP.NET Core Web API (.NET 8)** que gestiona un sistema de ventas con **Pedidos y Detalles**, aplicando reglas de negocio reales y buenas prácticas backend.
-
-## 🚀 Características
-
-- Gestión de:
-  -Clientes
-  - Productos
-  - Pedidos
-  - Detalles de pedido
-- Arquitectura en capas:
-  -Controllers
-  - Services
-  - Repositories
-- DTOs para entrada y salida
-- Validaciones fuertes
-- Cálculo de totales en backend
-- Paginación y filtros
-- EF Core + SQL Server
-- Logging con Serilog
-- Middleware global de errores
-- JWT configurado
+Este proyecto forma parte de mi portafolio como **Backend .NET Junior**, enfocado en buenas prácticas, seguridad y diseño limpio.
 
 ---
 
-## 🧠 Reglas de negocio implementadas
-
-- ❌ No se permiten pedidos sin productos
-- ❌ No se permiten productos duplicados en un pedido
-- ❌ No se permite usar productos inactivos
-- ❌ Cantidades ≤ 0 no permitidas
-- ✅ El total del pedido **se calcula en backend**
-- ✅ Subtotales calculados por producto
-- ✅ Validación de existencia de cliente y productos
-
----
-
-## 📦 Entidades
-
-- Cliente
-- Producto
-- Pedido
-- PedidoDetalle
-
-### Relaciones
-
-- Cliente 1 → N Pedidos
-- Pedido 1 → N Detalles
-- Producto N → N Pedido (via PedidoDetalle)
-
----
-
-## 🔗 Endpoints principales
-
-### Pedidos
-
-- `POST /api/pedidos/crear-pedido`
-- `GET /api/pedidos/obtener-pedido-detalles/{pedidoId}`
-- `GET / api / pedidos / obtener - pedido - detalles - cliente /{ clienteId}`
-
-### Filtros disponibles
-
--Por cliente
-- Por rango de fechas
-- Paginación (`page`, `pageSize`)
-
----
-
-## 🛠 Tecnologías
+## 🚀 Tecnologías utilizadas
 
 - ASP.NET Core Web API (.NET 8)
 - Entity Framework Core
 - SQL Server
 - JWT Authentication
+- Role-based Authorization
 - Serilog
-- LINQ
+- QuestPDF (exportación de facturas)
+- Swagger / OpenAPI
 
 ---
 
-## 📌 Notas
+## 🔐 Autenticación y roles
 
-Este proyecto fue desarrollado como parte de un plan de formación **Backend .NET**, enfocado en consolidar lógica de negocio, relaciones entre entidades y buenas prácticas reales de API REST.
+La API utiliza **JWT** para autenticación y autorización.
+
+### Roles disponibles:
+- **Admin**
+  - Puede ver y gestionar todas las facturas
+- **Vendedor**
+  - Solo puede ver y gestionar las facturas que él creó
 
 ---
 
-## 👨‍💻 Autor
+## 🧱 Entidades principales
 
-**Santiago**  
-Backend .NET Trainee / Junior  
-Ecuador 🇪🇨
+- **Cliente**
+- **Producto**
+- **Pedido (Factura)**
+- **PedidoDetalle**
+
+---
+
+## ⚙️ Funcionalidades
+
+- Autenticación con JWT
+- Creación de pedidos / facturas
+- Visualización de facturas con detalle
+- Listado de facturas por cliente
+- Filtros por fecha
+- Paginación
+- Control de acceso por rol y ownership
+- Exportación de facturas a **PDF**
+- Manejo centralizado de errores
+
+---
+
+## 📏 Reglas de negocio
+
+- El total de la factura se calcula automáticamente
+- No se permiten pedidos sin productos
+- No se permiten cantidades inválidas
+- El vendedor solo puede acceder a sus propios pedidos
+- El admin puede acceder a todos los pedidos
+
+---
+
+## 📄 Exportación de facturas
+
+Se permite exportar una factura a PDF mediante el endpoint:
+
+GET /api/pedidos/{id}/pdf
+
+
+El archivo se genera dinámicamente y se devuelve como respuesta HTTP.
+
+---
+
+## 🧪 Arquitectura
+
+- Controllers: Orquestan las solicitudes HTTP
+- Services: Contienen la lógica de negocio
+- Repositories: Acceso a datos (EF Core)
+- Middleware: Manejo global de errores
+- Servicios dedicados para infraestructura (PDF)
+
+---
+
+## 📌 Estado del proyecto
+
+✔️ Proyecto funcional  
+✔️ Enfocado en backend real  
+✔️ Preparado para ser parte de un portafolio profesional  
+
+---
+
+## 👤 Autor
+
+**Santiago Gonzáles**  
+Backend .NET Junior  
