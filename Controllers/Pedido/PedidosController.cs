@@ -1,4 +1,5 @@
 ﻿using API_de_Ventas.DTOs.PedidoDtoCarpeta;
+using API_de_Ventas.Models;
 using API_de_Ventas.Service.PedidoServiceCarpeta;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -22,9 +23,20 @@ namespace API_de_Ventas.Controllers.Pedido
         public async Task<IActionResult> ObtenerPedidoDetallesPorId(int pedidoId)
         {
 
-            
+            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorIdAsync(pedidoId);
+            if (!int.TryParse(usuarioIdClaim, out int usuarioId))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    error = "usuarioId invalido"
+                });
+            }
+
+            var esAdmin = User.IsInRole("Admin");
+
+            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorIdAsync(pedidoId,esAdmin,usuarioId);
 
             if(pedidoDetalle.IsFailure)
             {
@@ -52,7 +64,21 @@ namespace API_de_Ventas.Controllers.Pedido
             [FromQuery] int pageSize = 10
             )
         {
-            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorClienteIdAsync(clienteId, fechaInicio, fechaFinal, page, pageSize);
+
+            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(usuarioIdClaim, out int usuarioId))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    error = "usuarioId invalido"
+                });
+            }
+
+            var esAdmin = User.IsInRole("Admin");
+
+            var pedidoDetalle = await _pedidoService.ObtenerPedidoDetallesPorClienteIdAsync(clienteId,usuarioId,esAdmin ,fechaInicio, fechaFinal, page, pageSize);
 
             if (pedidoDetalle.IsFailure)
             {
@@ -67,6 +93,36 @@ namespace API_de_Ventas.Controllers.Pedido
             {
                 success = true,
                 valor = pedidoDetalle.Value
+            });
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> ObtenerPedidos(
+            [FromQuery] DateTime? fechaInicio,
+            [FromQuery] DateTime? fechaFinal,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (!int.TryParse(usuarioIdClaim, out int usuarioId))
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    error = "usuarioId invalido"
+                });
+            }
+
+            var esAdmin = User.IsInRole("Admin");
+
+            var pedidos = await _pedidoService.ObtenerPedidosAsync(usuarioId,esAdmin,fechaInicio,fechaFinal,page,pageSize);
+
+            return Ok(new
+            {
+                success = true,
+                valor = pedidos.Value
             });
         }
 
@@ -111,5 +167,40 @@ namespace API_de_Ventas.Controllers.Pedido
                 valor = pedidoCreado.Value
             });
         }
+
+        //[Authorize]
+        //[HttpGet("{pedidoId}/pdf")]
+        //public async Task<IActionResult> ExportarFactura(int pedidoId)
+        //{
+        //    var usuarioIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        //    if (!int.TryParse(usuarioIdClaim, out int usuarioId))
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            success = false,
+        //            error = "usuarioId invalido"
+        //        });
+        //    }
+
+        //    var esAdmin = User.IsInRole("Admin");
+
+        //    var pedidoPdf = await _pedidoService.ExportarPdfAsync(usuarioId, esAdmin);
+
+        //    if (pedidoPdf.IsFailure)
+        //    {
+        //        return BadRequest(new
+        //        {
+        //            success = false,
+        //            error = pedidoPdf.Error
+        //        });
+        //    }
+
+        //    return Ok(new
+        //    {
+        //        success = true,
+        //        valor = pedidoPdf.Value
+        //    });
+        //}
     }
 }

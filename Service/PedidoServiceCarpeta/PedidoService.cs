@@ -118,27 +118,35 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
 
             return Result<PedidoDto>.Success(pedidoCreadoDto);
         }
-        public async Task<Result<PedidoDto>> ObtenerPedidoDetallesPorIdAsync(int pedidoId)
+        public async Task<Result<PedidoDto>> ObtenerPedidoDetallesPorIdAsync(int pedidoId, bool esAdmin, int usuarioId)
         {
             if(pedidoId <= 0)
             {
                 return Result<PedidoDto>.Failure("Su pedidoId no puede ser menor o igual a 0");
             }
 
-            var pedidoExiste = await _pedidoRepository.ObtenerPedidoDetallesPorIdAsync(pedidoId);
+            var pedido = await _pedidoRepository.ObtenerPedidoDetallesPorIdAsync(pedidoId);
 
-            if(pedidoExiste == null)
+            if (pedido == null)
             {
                 return Result<PedidoDto>.Failure($"Su pedido con id = {pedidoId} no existe");
             }
 
+            if (!esAdmin)
+            {
+                if (pedido != null && pedido.UsuarioId != usuarioId)
+                {
+                    return Result<PedidoDto>.Failure("No puede ver un pedido que usted no creo");
+                }
+            }
+
             var pedidoDto = new PedidoDto
             {
-                Id = pedidoExiste.Id,
-                ClienteId = pedidoExiste.ClienteId,
-                FechaPedido = pedidoExiste.FechaPedido,
-                Total = pedidoExiste.Total,
-                DetallesDtos = pedidoExiste.Detalles.Select(d => new PedidoDetallesDto
+                Id = pedido.Id,
+                ClienteId = pedido.ClienteId,
+                FechaPedido = pedido.FechaPedido,
+                Total = pedido.Total,
+                DetallesDtos = pedido.Detalles.Select(d => new PedidoDetallesDto
                 {
                     PedidoId = d.Id,
                     Cantidad = d.Cantidad,
@@ -150,7 +158,7 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
 
             return Result<PedidoDto>.Success(pedidoDto);
         }
-        public async Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteIdAsync(int clienteId, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
+        public async Task<Result<List<PedidoDto>>> ObtenerPedidoDetallesPorClienteIdAsync(int clienteId, int usuarioId, bool esAdmin, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
         {
             if(clienteId <= 0)
             {
@@ -164,8 +172,46 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
                 return Result<List<PedidoDto>>.Failure($"Su cliente con id = {clienteId} no existe");
             }
 
-            var pedidos = await _pedidoRepository.ObtenerPedidosDetallesPorClienteIdAsync(clienteId, fechaInicio, fechaFinal, page, pageSize);
+            var pedidos = new List<Pedido>();
 
+            if(esAdmin)
+            {
+                 pedidos = await _pedidoRepository.ObtenerPedidosDetallesPorClienteIdAsync(clienteId, fechaInicio, fechaFinal, page, pageSize);
+            }else
+            {
+                 pedidos = await _pedidoRepository.ObtenerPedidosDetallesPorClienteIdYUsuarioIdAsync(clienteId,usuarioId ,fechaInicio, fechaFinal, page, pageSize);
+            }
+
+                var pedidosDto = pedidos.Select(p => new PedidoDto
+                {
+                    Id = p.Id,
+                    ClienteId = p.ClienteId,
+                    FechaPedido = p.FechaPedido,
+                    Total = p.Total,
+                    DetallesDtos = p.Detalles.Select(d => new PedidoDetallesDto
+                    {
+                        PedidoId = d.Id,
+                        Cantidad = d.Cantidad,
+                        PrecioUnitario = d.PrecioUnitario,
+                        ProductoId = d.ProductoId,
+                        Subtotal = d.Subtotal
+                    }).ToList()
+                }).ToList(); 
+
+            return Result<List<PedidoDto>>.Success(pedidosDto);
+        }
+
+        public async Task<Result<List<PedidoDto>>> ObtenerPedidosAsync(int usuarioId, bool esAdmin, DateTime? fechaInicio, DateTime? fechaFinal, int page, int pageSize)
+        {
+            var pedidos = new List<Pedido>();
+
+            if(esAdmin)
+            {
+                pedidos = await _pedidoRepository.ObtenerPedidosAsync(null,fechaInicio,fechaFinal,page, pageSize);
+            }else
+            {
+                pedidos = await _pedidoRepository.ObtenerPedidosAsync(usuarioId, fechaInicio, fechaFinal, page, pageSize);
+            }
 
             var pedidosDto = pedidos.Select(p => new PedidoDto
             {
@@ -181,7 +227,7 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
                     ProductoId = d.ProductoId,
                     Subtotal = d.Subtotal
                 }).ToList()
-            }).ToList(); 
+            }).ToList();
 
             return Result<List<PedidoDto>>.Success(pedidosDto);
         }
