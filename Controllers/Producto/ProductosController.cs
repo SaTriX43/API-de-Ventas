@@ -1,5 +1,6 @@
 ﻿using API_de_Ventas.DTOs.ProductoDtoCarpeta;
 using API_de_Ventas.Service.ProductoServiceCarpeta;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ namespace API_de_Ventas.Controllers.Producto
             _productoService = productoService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<IActionResult> CrearProducto([FromBody] ProductoCrearDto dto)
         {
@@ -46,6 +48,7 @@ namespace API_de_Ventas.Controllers.Producto
                 );
         }
 
+        [Authorize]
         [HttpGet("{productoId}")]
         public async Task<IActionResult> ObtenerProductoPorId(int productoId)
         {
@@ -68,6 +71,7 @@ namespace API_de_Ventas.Controllers.Producto
             });
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> ObtenerTodosProductos()
         {
@@ -80,6 +84,7 @@ namespace API_de_Ventas.Controllers.Producto
             });
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{productoId}")]
         public async Task<IActionResult> ActualizarProducto(int productoId, [FromBody] ProductoActualizarDto dto)
         {

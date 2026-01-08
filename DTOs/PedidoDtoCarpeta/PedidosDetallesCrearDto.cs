@@ -6,6 +6,7 @@ namespace API_de_Ventas.DTOs.PedidoDtoCarpeta
     {
         [Required]
         public int ProductoId { get; set; }
+
         [Required]
         public int Cantidad { get; set; }
     }

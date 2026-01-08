@@ -41,7 +41,7 @@ namespace API_de_Ventas.Controllers.Cliente
                 });
             }
 
-            return CreatedAtAction(nameof(ObtenerClientePorId), new { id = result.Value.Id }, result.Value);
+            return CreatedAtAction(nameof(ObtenerClientePorId), new { clienteId = result.Value.Id }, result.Value);
         }
 
         [Authorize]
@@ -64,17 +64,6 @@ namespace API_de_Ventas.Controllers.Cliente
             {
                 success = true,
                 value = result.Value
-            });
-        }
-
-        [Authorize]
-        [HttpGet("test-auth")]
-        public IActionResult TestAuth()
-        {
-            return Ok(new
-            {
-                User = User.Identity?.Name,
-                Claims = User.Claims.Select(c => new { c.Type, c.Value })
             });
         }
     }

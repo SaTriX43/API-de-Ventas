@@ -25,7 +25,7 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
             _unidadDeTrabajo = unidadDeTrabajo;
         }
 
-        public async Task<Result<PedidoDto>> CrearPedidoAsync(PedidoCrearDto pedidoCrearDto)
+        public async Task<Result<PedidoDto>> CrearPedidoAsync(PedidoCrearDto pedidoCrearDto, int usuarioId)
         {
             var clienteExiste = await _clienteRepository.ObtenerClientePorIdAsync(pedidoCrearDto.ClienteId);
 
@@ -89,6 +89,7 @@ namespace API_de_Ventas.Service.PedidoServiceCarpeta
 
             var pedidoModel = new Pedido
             {
+                UsuarioId = usuarioId,
                 ClienteId = pedidoCrearDto.ClienteId,
                 FechaPedido = DateTime.UtcNow,
                 Total = total,
